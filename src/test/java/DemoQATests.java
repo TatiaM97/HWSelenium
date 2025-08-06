@@ -1,6 +1,6 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
@@ -11,8 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.time.Duration;
 
 public class DemoQATests {
@@ -94,9 +93,9 @@ public class DemoQATests {
         hobbies.click();
 
         // Загружаем файл
+        File file = new File("src/test/resources/test_files/example.jpg");
+        String absolutePath = file.getAbsolutePath();
         WebElement uploadPicture = driver.findElement(By.id("uploadPicture"));
-        Path filePath = Paths.get("src", "test", "resources", "test_files", "example.jpg");
-        String absolutePath = filePath.toAbsolutePath().toString();
         uploadPicture.sendKeys(absolutePath);
 
         // Заполняем адрес
@@ -122,45 +121,49 @@ public class DemoQATests {
         // Дожидаемся появления таблицы с результатами
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("table.table.table-dark")));
 
+        SoftAssertions softly = new SoftAssertions();
+
         // Проверяем имя и фамилию
         WebElement nameCell = driver.findElement(By.xpath("//td[text()='Student Name']/following-sibling::td"));
-        Assertions.assertEquals("Кот Котофеев", nameCell.getText(), "Неверное имя студента");
+        softly.assertThat(nameCell.getText()).as("Неверное имя студента").isEqualTo("Кот Котофеев");
 
         // Проверяем email
         WebElement emailCell = driver.findElement(By.xpath("//td[text()='Student Email']/following-sibling::td"));
-        Assertions.assertEquals("kot.kotofeev@mail.ru", emailCell.getText(), "Неверный email");
+        softly.assertThat(emailCell.getText()).as("Неверный email").isEqualTo("kot.kotofeev@mail.ru");
 
         // Проверяем пол
         WebElement genderCell = driver.findElement(By.xpath("//td[text()='Gender']/following-sibling::td"));
-        Assertions.assertEquals("Male", genderCell.getText(), "Неверно указан пол");
+        softly.assertThat(genderCell.getText()).as("Неверно указан пол").isEqualTo("Male");
 
         // Проверяем номер телефона
         WebElement mobileCell = driver.findElement(By.xpath("//td[text()='Mobile']/following-sibling::td"));
-        Assertions.assertEquals("0123456789", mobileCell.getText(), "Неверный номер телефона");
+        softly.assertThat(mobileCell.getText()).as("Неверный номер телефона").isEqualTo("0123456789");
 
         // Проверяем дату рождения
         WebElement dobCell = driver.findElement(By.xpath("//td[text()='Date of Birth']/following-sibling::td"));
-        Assertions.assertEquals("13 September,2019", dobCell.getText(), "Неверная дата рождения");
+        softly.assertThat(dobCell.getText()).as("Неверная дата рождения").isEqualTo("13 September,2019");
 
         // Проверяем предметы
         WebElement subjectsCell = driver.findElement(By.xpath("//td[text()='Subjects']/following-sibling::td"));
-        Assertions.assertEquals("Computer Science", subjectsCell.getText(), "Неверно указаны предметы");
+        softly.assertThat(subjectsCell.getText()).as("Неверно указаны предметы").isEqualTo("Computer Science");
 
         // Проверяем хобби
         WebElement hobbiesCell = driver.findElement(By.xpath("//td[text()='Hobbies']/following-sibling::td"));
-        Assertions.assertEquals("Sports", hobbiesCell.getText(), "Неверно указаны хобби");
+        softly.assertThat(hobbiesCell.getText()).as("Неверно указаны хобби").isEqualTo("Sports");
 
         // Проверяем загруженное изображение
         WebElement pictureCell = driver.findElement(By.xpath("//td[text()='Picture']/following-sibling::td"));
-        Assertions.assertEquals("example.jpg", pictureCell.getText(), "Неверное имя файла изображения");
+        softly.assertThat(pictureCell.getText()).as("Неверное имя файла изображения").isEqualTo("example.jpg");
 
         // Проверяем адрес
         WebElement addressCell = driver.findElement(By.xpath("//td[text()='Address']/following-sibling::td"));
-        Assertions.assertEquals("Koshachya Street", addressCell.getText(), "Неверный адрес");
+        softly.assertThat(addressCell.getText()).as("Неверный адрес").isEqualTo("Koshachya Street");
 
         // Проверяем штат и город
         WebElement stateCityCell = driver.findElement(By.xpath("//td[text()='State and City']/following-sibling::td"));
-        Assertions.assertEquals("NCR Delhi", stateCityCell.getText(), "Неверно указаны штат и город");
+        softly.assertThat(stateCityCell.getText()).as("Неверно указаны штат и город").isEqualTo("NCR Delhi");
+
+        softly.assertAll();
     }
 
     @AfterEach
